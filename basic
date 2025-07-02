@@ -1,0 +1,84 @@
+// BookReviewApp.jsx
+import React, { useState } from "react";
+
+const booksData = [
+  {
+    id: 1,
+    title: "The Great Gatsby",
+    author: "F. Scott Fitzgerald",
+    reviews: [
+      { user: "Alice", text: "A classic!" },
+      { user: "Bob", text: "Loved the characters." },
+    ],
+  },
+  {
+    id: 2,
+    title: "1984",
+    author: "George Orwell",
+    reviews: [
+      { user: "Eve", text: "Thought-provoking and chilling." },
+    ],
+  },
+];
+
+export default function BookReviewApp() {
+  const [books, setBooks] = useState(booksData);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [reviewText, setReviewText] = useState("");
+
+  const handleAddReview = () => {
+    if (!reviewText.trim()) return;
+    const updatedBooks = books.map((book) => {
+      if (book.id === selectedBook.id) {
+        return {
+          ...book,
+          reviews: [...book.reviews, { user: "You", text: reviewText.trim() }],
+        };
+      }
+      return book;
+    });
+    setBooks(updatedBooks);
+    setReviewText("");
+  };
+
+  return (
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
+      <h1>Book Review Platform</h1>
+
+      {!selectedBook ? (
+        <ul>
+          {books.map((book) => (
+            <li key={book.id} onClick={() => setSelectedBook(book)} style={{ cursor: "pointer", marginBottom: "10px" }}>
+              <strong>{book.title}</strong> by {book.author}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div>
+          <button onClick={() => setSelectedBook(null)}>&larr; Back</button>
+          <h2>{selectedBook.title}</h2>
+          <p>by {selectedBook.author}</p>
+
+          <h3>Reviews</h3>
+          <ul>
+            {selectedBook.reviews.map((review, index) => (
+              <li key={index}>
+                <strong>{review.user}:</strong> {review.text}
+              </li>
+            ))}
+          </ul>
+
+          <textarea
+            placeholder="Write your review..."
+            value={reviewText}
+            onChange={(e) => setReviewText(e.target.value)}
+            rows="4"
+            style={{ width: "100%", marginTop: "10px" }}
+          ></textarea>
+          <br />
+          <button onClick={handleAddReview} style={{ marginTop: "10px" }}>Submit Review</button>
+        </div>
+      )}
+    </div>
+  );
+}
